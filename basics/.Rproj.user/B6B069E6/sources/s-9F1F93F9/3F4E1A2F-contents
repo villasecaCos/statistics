@@ -1,0 +1,107 @@
+## Script based on the contents in
+## http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html
+## http://r-statistics.co/Complete-Ggplot2-Tutorial-Part2-Customizing-Theme-With-R-Code.html
+
+#install.packages("ggplot2")
+library(ggplot2)
+
+#install.packages("randomForest")
+data("imports85", package = "randomForest") # load the data into variable: imports85.
+## the idea is to define simple graph and add each new feture we want to include. 
+## head(imports85) shows first 4 rows/View(imports85).
+
+# ggplot INITIALIZATION/create graph with this data (we will configure which data, type of plot,.... the graph later)
+## aes - aesthetics.
+g <- ggplot(imports85, aes(x=horsepower, y=price)) # horsepower and price are columns in imports85
+
+
+# A SIMPLE SCATTERPLOT/geometric points type of graph
+g.scatter <- g + geom_point() 
+
+
+# AXES LIMITS
+## Use xlim and ylim to delete the points outside the range
+g.lim <- g.scatter +
+  xlim(c(0,300)) + #c(0,300) creates a vector
+  ylim(c(0,35000))
+
+## Use coord_cartesian to zoom in the given range
+g.coord <- g.scatter +
+  coord_cartesian(xlim=c(0,300),ylim=c(0,35000))
+
+
+# AXES BREAKS
+g.breaks <- g.coord +
+  scale_x_continuous(breaks = seq(0,300,50)) +
+  scale_y_continuous(breaks = seq(0,35000,7000))
+
+
+# TITLES
+## Add titles
+g.titles <- g.scatter +
+  labs(title="Horse power Vs Price", 
+       subtitle="From imports85 dataset", 
+       y="Price", 
+       x="Horse power",
+       caption = "Source: UCI Machine Learning Repository")
+
+## Modify the style of the titles
+g.fancytitles <- g.titles +
+  theme(plot.title=element_text(size=20, 
+                                face="bold", 
+                                family="American Typewriter",
+                                color="tomato",
+                                hjust=0.5),  # title
+        plot.subtitle=element_text(size=15, 
+                                   family="American Typewriter",
+                                   face="bold",
+                                   hjust=0.5),  # subtitle
+        plot.caption=element_text(size=15,
+                                  hjust = 0),  # caption
+        axis.text.x=element_text(size=10, 
+                                 angle = 30,
+                                 vjust=.5),  # X axis text
+        axis.text.y=element_text(size=10))  # Y axis text
+
+
+# COLOR AND SIZE OF POINTS
+## To static
+g.samecolorandsize <- g +
+  geom_point(col="darkturquoise",size=3)
+
+## Color depending on categories
+g.color <- g +
+  geom_point(aes(col = bodyStyle))
+
+## Size depending on quantities
+g.size <- g +
+  geom_point(aes(size = peakRpm))
+
+## Color depending on categories, size depending on quantities,
+## shape depending on categories
+g.color.size.shape <- g +
+  geom_point(aes(col = bodyStyle,size = peakRpm, shape = fuelType))
+
+
+# LEGEND
+## Position
+g.legend.position <- g.color.size.shape +
+  theme(legend.position="bottom")
+
+## Labels and colors for the categories manually
+g.legend.labels.colors <- g.color +
+  scale_color_manual(name="Style", 
+                     labels = c("CONVERTIBLE", 
+                                "HARDTOP", 
+                                "HATCHBACK", 
+                                "SEDAN", 
+                                "WAGON"), 
+                     values = c("convertible"="blue", 
+                                "hardtop"="red", 
+                                "hatchback"="green", 
+                                "sedan"="brown", 
+                                "wagon"="orange"))
+
+## Color palette
+g.palette <- g.color +
+  scale_colour_brewer(palette = "Set1") 

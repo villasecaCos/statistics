@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1618948089164.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2102906988",
+    "id" : "3F4E1A2F",
+    "lastKnownWriteTime" : 1571302327,
+    "last_content_update" : 1571302327,
+    "path" : "~/Documentos/IC4_0/2-group/data_analysis/labs/Viz/ggplot_basics.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "20,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

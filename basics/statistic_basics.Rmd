@@ -1,0 +1,535 @@
+---
+title: "basic statistics"
+author: "Juan Villaseca"
+date: "29/3/2021"
+output: html_document
+resource_files:
+  - images/figure.png
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+Chapter 1. Descriptive statistics 
+
+Problem 1. An study about nutrition and health requested information of the food. Specifically, the amount of proteins(gr), carbohydrates(gr), fats(gr), and sodium(mgr) in their products. 
+A list of the products is presented below: 
+
+```{r echo = FALSE}
+# vectors of nutritional information of the products
+product <- c('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O')
+proteins <- c(29,15,11,16,18,15,52,24,18,3,1,2,11,11,26)
+carbohydrates <- c(51,24,14,39,64,34,56,63,26,28,11,31,50,60,39)
+fats <- c(32,13,8,24,46,23,46,54,20,10,8,19,11,9,31)
+sodium <- c(909,303,79,836,735,709,2285, 1915, 914,5,266,414,159,329,962)
+# create data frame with the vectors
+products.info = data.frame(product,proteins,carbohydrates,fats,sodium)
+products.info
+```
+
+(a) Compute the mean, median, standard deviation, first and third quantiles for each column. 
+
+```{r echo=FALSE}
+# create a dataframe with means, median, std of the columns
+col.names <- c('measure','proteins','carbohydrates','fats','sodium')
+measures.names <- c('mean','median','std')
+measures <- data.frame(matrix(ncol = length(col.names), nrow = length(measures.names)))
+names(measures) <- col.names
+measures[1]<- measures.names
+measures[1,2:5] <- apply(products.info[2:5],2,mean)#second parameter means by columns
+measures[2,2:5] <- apply(products.info[2:5],2,median)
+measures[3,2:5] <- apply(products.info[2:5],2,sd)
+measures
+quartiles.proteins <- quantile(products.info$proteins)# returns named vector
+quartiles.proteins
+
+```
+
+(b) Compute covariancce and correlation matrices. 
+
+```{r echo=FALSE}
+cov.matrix <- cov(products.info[2:5])#compute covariance matrix over the columns
+cor.matrix <- cor(products.info[2:5])#compute correlation matrix over the columns
+cov.matrix
+cor.matrix
+```
+
+Problem 2. If the probability of rain throughout the day is 0.5, approximate the probability
+of rain troughout the weekend (given that the weather forecast on saturday does not add any information of the weather forecast of sunday). Compare it with the theoretically probability. 
+
+```{r}
+prob.rain <- 0.5 #probability of rain
+n2 <- 52 #weeks in a year
+rainy.days <- rbinom(n2, size = 2, prob=prob.rain)#number of days that have rained in 2 days
+rain.in.weekends <- sapply(rainy.days,function(x) if(x>0) 1 else 0)
+prob.weekend <- sum(rain.in.weekends)/n2
+prob.weekend
+
+```
+
+\[
+P(A) \sim \text{Probability of raining on saturday}
+\]
+\[
+P(B) \sim \text{Probability of raining on sundays}
+\]
+\[
+P(R) \sim \text{Probability of raining on weekends}
+\]
+\[
+P(R) = P(A\cup B) = P(A) + P(B) - p(A\cap B) = P(A)+P(B)-P(A)*P(B)
+\]
+\[
+P(R) = 0.75 , P(A) = P(B) = 1/2
+\]
+
+Problem 3. Check the reliability of a system that have 5 components in series. Each component has a failure probability of 5%. Compare it with the theoretically reliability. 
+
+```{r}
+prob.fail <- 0.05 #   probability of failure of one component
+n3 <- 1000 #weeks in a year
+components.fails <- rbinom(n3, size = 5, prob=prob.fail)#number of malfunctioning components in a 5 components system.
+system.failures <- sapply(components.fails, function(x) if(x>=1) 1 else 0)
+prob.failure <- sum(system.failures)/n3 # probability of failure of the system
+prob.failure
+```
+
+\[
+P(F) \sim \text{Probability of failure of one component}
+\]
+\[
+P(S) \sim \text{Probability of failure of the system}
+\]
+\[
+P(S) = P(F.{1}\cup F.{2}\cup ...F.{5}) = 1 - P(\bar{F.{1}} \cap \bar{F.{2}}\cap...\bar{F.{5}}) = 1 - P(\bar{F})^5 = 1 - 0.95⁵ = 0.226 
+\]
+
+Problem 4. A company that has to decide whether to purchase a certain block of shares asks the opinion of three financial advisors, who will independently decide in favor of the purchase with probabilities of 0.8, 0.5 and 0.3, respectively.
+
+(a) Determine the probability of, at least, one of them recommending the purchase. 
+\[
+P(B) \sim \text{Probability of at least, one of them recommending the purchase}
+\]
+\[
+P(A) \sim \text{Probability of decide in favor of the purchase}
+\]
+\[
+P(B) = P(A.{1}\cup A.2\cup A.{3}) = 1 - P(\bar{A.{1}}\cap \bar{A.{2}}\cap \bar{A.{3}}) = 1 - 0.2*0.5*0.7 = 1 - 0.07 = 0.93
+\]
+
+(b) Determine the probability of none of them recommending the purchase. 
+
+\[
+P(N) \sim \text{Probability of none of them recommending the purchase}
+\]
+\[
+P(N) = P(\bar{A.{1}}\cap \bar{A.{2}}\cap \bar{A.{3}}) = 0.07
+\]
+(c) Determine the probability of two of them recommending the purchase.
+\[
+P(S) \sim \text{Probability of two of them recommending the purchase}
+\]
+\[
+P(S) = P(A_{1}\cap A_{2}\cap \bar{A_{3}}) + P(\bar{A_{1}}\cap A_{2}\cap A_{3}) + 
+P(A_{1}\cap \bar{A_{2}}\cap A_{3}) = 0.8*0.5*0.7 + 0.2*0.5*0.3 + 0.8*0.5*0.3 = 0.43
+\]
+
+(d) Approximate section (a) and (c)
+
+```{r }
+
+n4 <- 10000
+prob.a1 <- 0.8 # a1 is advisor 1
+prob.a2 <- 0.5 
+prob.a3 <- 0.3
+recommend.a1 <- rbinom(n4, size = 1, prob=prob.a1)# a1 recommend or not
+# the previous line is equivalent to:  rbern(n4,prob.a1)
+recommend.a2 <- rbinom(n4, size = 1, prob=prob.a2)
+recommend.a3 <- rbinom(n4, size = 1, prob=prob.a3)
+total.recommned <- recommend.a1+recommend.a2+recommend.a3
+at.least.one <- sapply(total.recommned, function(x) if(x>=1) 1 else 0)
+prob.at.least.one <- sum(at.least.one)/n4
+two <- sapply(total.recommned, function(x) if(x==2) 1 else 0)
+prob.two <- sum(two)/n4
+prob.at.least.one
+prob.two
+```
+
+Problem 5. Consider the electrical circuit consisting of four switches, I1, I2, I3 and I4, arranged as shown in Figure 1.1. Knowing that for each switch, the state in which it is (open or closed) is independent of the state of the other switches and that the probability of being open (i.e. not allowing current to flow) is 10%. 
+
+![Electric circuit.](images/circuit1.png)
+
+
+(a) Determine the probability that the circuit is closed, i.e. there is a connection between A and B.
+
+\[
+P(C) \sim \text{Probability that a switch is down}
+\]
+\[
+P(CC) \sim \text{Probability that the circuit is closed}
+\]
+\[
+P(CC) = 1 - P(\bar{C_{1}}\cap \bar{C_{3}}\cap \bar{C_{2}}\cap \bar{C_{4}}) - 4*P(C_{1}\cap \bar{C_{3}}\cap \bar{C_{2}}\cap \bar{C_{4}}) - 4*P(C_{1}\cap \bar{C_{3}}\cap C_{2}\cap \bar{C_{4}}) 
+\]
+\[
+P(CC) = 1 - (0.1⁴ + 4*0.9*0.1³+4*0.9²*0.1²) = 1 - 0.0361 = 0.9639
+\]
+
+(b) Approximate (a)
+
+```{r}
+n5 <- 10000
+prob.I <- 0.9
+odd.switchs.down <- rbinom(n5,size = 2, prob = prob.I)# there are 2 switches per branch
+even.switchs.down <- rbinom(n5,size = 2, prob = prob.I)
+connections.odd <- sapply(odd.switchs.down, function(x) if(x==2) 1 else 0)
+connections.even <- sapply(even.switchs.down, function(x) if(x==2) 1 else 0)
+total.connections <- sapply(connections.even + connections.odd, function(x) if(x>=1) 1 else 0)
+prob.closed <- sum(total.connections)/n5
+prob.closed
+```
+
+Problem 6. An industrial process follows the scheme shown in Figure 1.2. According to this scheme, for a part to be manufactured correctly, it must go through three different sub-processes:
+1) Pre-check (C), 2) Assembly, which may be carried out by three different types of machinery (M1, M2 or M3), and 3) Packaging, which can be done in cardboard or metal boxes (E1 or E2). Knowing that each of these six sub-processes is passed correctly (or is operative) with a probability of 95 % and that the sub-processes occur independently of each other.
+
+![Industrial process.](images/factory.png)
+
+(a) Determine the probability that a randomly chosen part will be manufactured correctly
+
+\[
+P(S) \sim \text{Probability of successfully manufacture one part}
+\]
+\[
+P(S) = P(C\cap[M1\cup M2\cup M3]\cap[E1\cup E2]) = P(C)*P(M1\cup M2\cup M3)*P(E1\cup E2) 
+\]
+\[
+  P(M1\cup M2\cup M3) = P(M1)+P(M2)+P(M3)-P(M1\cap M2)-P(M1\cap M3)-P(M2\cap M3)+P(M1\cap M2\cap M3) 
+\]
+\[
+= 3*P(M)-3*P(M)^2+P(M)^3 = 0.9998
+\]
+\[
+P(E1\cup E2) = P(E1)+P(E2)-P(E1)*P(E2) = 2*P(E)-P(E)² = 0.9975
+\]
+\[
+P(S) = 0.95*0.9998*0.9975 = 0.9474
+\]
+
+(b) If subprocess E1 has ceased to be operational for a period of time, what is the probability that a part chosen at random from among the parts manufactured during that period of time has been manufactured correctly?
+\[
+P(S/\bar{E1}) = P(C\cap[M1\cup M2\cap M3]\cap E2) = P(C)*P(M1\cup M2\cap M3`)*P(E2) = 0.95*0.9998*0.95 = 0.9023
+\]
+(c) Knowing that a randomly selected part was not manufactured correctly, what is the probability that subprocess E1 was not operative at the time of its manufacture?
+What is the probability that sub-process E1 was not operational at the time of its manufacture?
+\[
+P(\bar{E1}/\bar{S}) = P(C\cap[M1\cup M2\cup M3]\cap [\bar{E1}\cap \bar{E2}]) = P(C)*P(M1\cup M2\cup M3)*P(\bar{E1})*P(\bar{E2}) = 0.95*0.9998*0.05*0.05 = 0.0023
+\]
+
+(d) Approximate (a)
+
+```{r echo=FALSE}
+prob.f <- 0.95
+n6 = 1000
+component.c <- rbinom(n6, size = 1, prob = prob.f)
+components.m <- rbinom(n6, size = 3, prob = prob.f)
+num.success.m <- sapply(components.m, function(x) if(x>=1) 1 else 0)
+conponents.e <- rbinom(n6, size = 2, prob = prob.f)
+num.succes.e <- sapply(conponents.e, function(x) if(x>=1) 1 else 0)
+num.success <- sapply(component.c*num.success.m*num.succes.e, function(x) if(x>=1) 1 else 0)
+prob.s <- sum(num.success)/n6
+prob.s
+```
+
+Problem 7. Simulate the 5 rolls of 3 even dice. 
+
+```{r}
+# rbinom not useful when sample space is not {0,1}
+# number of dice (a trick to  simulate 5 rolls)
+# instead of 3 dice and two times two of them (because they all are even)
+dice <- 5
+sample.space <- 1:6
+rolls <- sample(sample.space, size = dice, replace = TRUE)
+```
+
+Problem 8. Knowing that the waiting time in seconds from the time an electronic message is sent until it is received is distributed according to an a.v. X with density given by f(x) =
+xe^-x , x > 0, we ask:
+
+(a) Compute his distribution function.
+
+\[
+F(x) = \int^{x}_{-\infty}\lambda \mathrm{e}^{-\lambda t}\,\mathrm{d}t = -\int^{x}_{0} -\lambda \mathrm{e}^{-\lambda t}\,\mathrm{d}t
+\]
+
+\[
+-[\mathrm{e}^{-\lambda t}]_{t=0}^{t=x} = -[\mathrm{e}^{-\lambda x} - 1] = 1 -\mathrm{e}^{-\lambda x}
+\]
+
+(b) Implement a function that generates n × m values of that r.v 
+
+```{r}
+library(dplyr)
+library(magrittr)
+
+boostrap.exp <- function(n, m, lambda=1){
+  samples <- matrix(nrow = n, ncol = m)
+  for (i in seq(1,n)) {
+    samples[i,] <- rexp(m,lambda) %>% round(digits = 2)
+  }
+  return(samples)
+}
+n = 5
+m = 10
+samples <- boostrap.exp(n, m)
+samples[1:2,]
+```
+
+Problem 9. Generate 100 values of the following function: 
+
+\[ f(n) =
+  \begin{cases}
+    1 - \mathrm{{e}^{(1 - \mathrm{e^{x}})}}    & \quad x > 0\\
+    0  & \quad\text{ otherwise}
+  \end{cases}
+\]
+
+Applying the inverse method:
+
+\[
+1 - \mathrm{e^{(1 - \mathrm{F^{(-1}(u))}}} = u
+\]
+\[
+\mathrm{e^{(\mathrm{F^{-1}(u))}}} = 1-\mathrm{log(1-u)}
+\]
+\[
+F^{-1}(u) = \mathrm{log(1-\mathrm{log(1-u))}}
+\]
+\[
+\text{with X\sim U(0,1) = F^{-1}(u)
+\]
+
+```{r echo=FALSE}
+u <- runif(100)
+n <- log(1 - log(1-u))
+```
+
+Problem 10. The following code uses the inverse transform method
+to generate values of a v.a. X continues and takes values in the interval (0, 3). Starting
+From that code, state the distribution function of X and its density function.
+
+```{r echo=TRUE}
+n <- 10000
+u <- runif(n)
+X <- 2*sqrt(u)*(u<0.25) + (2*u+0.5)*(0.25<=u & u<0.75) + (3-2*sqrt(1-u))*(u>=0.75)
+```
+
+\[
+X \text{ is a piecewise function. For each piece, we need to find the original function.}
+\]
+
+\[ f(n) =
+  \begin{cases}
+    2*\sqrt u    & \quad \text{if } u < 0.25\\
+    2*u + 0.5   & \quad \text{if }  0.25 <=  u < 0.75\\
+    3 - 2*\sqrt{1-u}   & \quad \text{if }  u >= 0.75\\
+  \end{cases}
+\]
+\[
+\text{Piece 1: }0<F(X)<0.25 
+\]
+\[
+F^{-1}(u) = 2*\sqrt u \to u = \frac{F^{-1}(u)^2}{{4}} \to X = \frac{x^2}{{4}}
+\]
+\[
+\text{Piece 2: }0.25<=F(X)<0.75 
+\]
+\[
+F^{-1}(u) = 2*u + 0.5 \to   u = \frac{F^{-1}(u) - 0.5}{{2}} \to X = \frac{x - 0.5}{{2}}
+\]
+\[
+\text{Piece 3: }0.75<=F(X)<1
+\]
+\[
+3 - n* \sqrt{1-u}  = F^{-1}(u) \to   u = 1 - \bigg( \frac{3 - F^{-1}(u)}{{2}}\bigg)^2 \to 
+\]
+\[
+X =  1 - \bigg( \frac{3 - x}{2}\bigg)^2
+\]
+\[ F(X) =
+  \begin{cases}
+    0                  & \quad \text{if } x < 0\\
+    \frac{x^2}{{4}}    & \quad \text{if } x < 1\\
+    \frac{x - 0.5}{{2}}  & \quad \text{if }  1 <=  x < 2\\
+    1 - \bigg( \frac{3 - x}{2}\bigg)^2   & \quad \text{if }  2 <=  x < 3\\
+    1 & \quad \text{if } x >= 3\\
+  \end{cases}
+\]
+
+
+\[ f(x) =
+  \begin{cases}
+    \frac{x}{2}    & \quad \text{if } x < 1\\
+    \frac{1}{2}  & \quad \text{if }  1 <=  x < 2\\
+    \frac{3-x}{2}   & \quad \text{if }  2 <=  x < 3\\
+    0 & \quad{otherwise}
+  \end{cases}
+\]
+
+```{r}
+# values (0,3)
+n <- 1000
+x <- seq(0, 3, by=0.1)
+Fx <- (x^2)/4*(x<1) + ((x-0.5)/2)*(1<=x & x<2) + (1-((3-x)/2)^2)*(2<=x & x<3) + 1*(x<=3)
+fx <- x/2*(x<1) + (1/2)*(1<=x & x<2) + ((3-x)/2)*(2<=x & x<3)
+
+plot.Fx <- plot(x,Fx)
+
+plot.fx <- plot(x,fx)
+
+```
+
+Problem 11. Given X a Rayleigh r.v of parameter \[\alpha > 0\], with density function is:
+
+\[ f(x) =
+  \begin{cases}
+    \alpha x\mathrm{e^{(-\frac{\alpha}{2}x^2)}}    & \quad \text{if } x > 0\\
+    0  & \quad \text{otherwise} \\
+  \end{cases}
+\]
+
+Compute the distribution function and apply the inverse method: 
+
+\[
+F(x) = \int_{0}^{x}{\alpha t\mathrm{e^{-\frac{\alpha}{2}t^2}} dt} = - \int_{0}^{x}{-\alpha t\mathrm{e^{-\frac{\alpha}{2}t^2}} dt} = 
+\]
+\[
+[\mathrm{e^{-\frac{\alpha}{2}t^2}}]_{t=0}^{t=x} = (1 - \mathrm{e^{-\frac{\alpha}{2}t^2}})
+\]
+
+\[
+(1 - \mathrm{e^{-\frac{\alpha}{2}F^{-1}(x)^2}}) = u
+\]
+\[
+\mathrm{e^{-\frac{\alpha}{2}F^{-1}(x)^2}} = 1-u
+\]
+\[
+F^{-1}(x) = \sqrt{-\frac{2}{\alpha}\log(1-u)}
+\]
+
+
+(a) Generate 50 values of X with \[alpha=0.1\]
+What numerical and graphical procedures could be used to see that the v.a. has been generated correctly? 
+
+\[
+\text{Compare theoretical mean and variance with obtained mean and variance. Graphically, it could be checked by a plot}
+\]
+
+```{r echo=TRUE}
+n <- 1000
+a <- 0.17
+u <- runif(n)
+
+x <- sqrt((-2/a)*log(1-u))
+plot(u,x)
+
+mean <- mean(x)
+theoretical_mean <- sqrt(pi/(2*a))
+var <- var(x)
+theoretical_var <- (4 - pi)/(2*a)
+```
+
+
+Problem 12. A vehicle is moving in a straight line in the direction of the abscissa axis and in a positive direction at a constant speed of a units. A random direction is chosen at random so that the direction forms an angle θ with the motion of the vehicle randomly chosen so that the direction forms an angle θ with the motion of the vehicle as shown in Figure 1.3. i θ se distribuye según un modelo uniforme continuo en (0, π) y se sabe que la velocidad efectiva del vehı́culo en la dirección aleatoria viene dada por la expresión
+V = a cos(θ):
+
+![car along x axis](images/car.png)
+
+(a) Determine the density and the distribution function of the effective velocility.
+
+\[ f(\theta) =
+  \begin{cases}
+    \frac{1}{\pi}    & \quad \text{if } \theta  [0,\pi]\\
+    0  & \quad \text{otherwise} \\
+  \end{cases}
+\]
+
+\[ F(v) =
+  \begin{cases}
+    0 & \quad \text{if } v  < a\\
+    acos(\frac{x+1}{2})    & \quad \text{if } -1  < v < 1\\
+    1  & \quad \text{if } v > b
+  \end{cases}
+\]
+
+\[ f(v) =
+  \begin{cases}
+    acos(\frac{1}{\pi})    & \quad \text{if } -1  < v < 1\\
+    0  & \quad \text{otherwise} \\
+  \end{cases}
+\]
+
+(b) 
+(c)
+
+```{r}
+n <- 10000
+a <- 1
+theta <- runif(n,min = 0, max = pi)
+
+velocity.theory <- runif(n, min=-1,max=1)
+velocity <- a*cos(theta)
+
+plot(theta,velocity.theory)
+plot(theta,velocity)
+```
+
+
+Problem 14. Indicate how you would simulate the value of the number e = 2.71828...
+
+(a) Using poisson process
+
+```{r}
+lamda <- 1
+n <- 1000
+
+
+```
+
+(b) Using exponential distribution
+
+Problem 15. In a customer service office there are two types of clients, those who make a complaint (type I clients) and those who request information (type II clients).
+Of every 200 people who pass through the office, 75 make complaints and the rest request information.
+It is also known that the time in minutes that each type I client spends in the office (from the time he/she enters the office to the time he/she spends in the office) is
+in the office (from the time they enter to the time they leave the office, including waiting time) is distributed according to an average Exponential
+On the other hand, for a type II customer, this time is distributed according to an Exponential with an average of 15 minutes.
+
+(a) What is the probability that a customer will spend at most a quarter of an hour in the office?
+
+(b) If a customer has spent less than 15 minutes in the office, what is the probability that the customer has made a complaint?
+
+(c) Approximate (a) and (b)
+
+Problem 18. The lifetime of certain electronic components follows an Exponential distribution with a mean of 100 days.
+
+(a) What is the probability that one of the above components will last more than 50 days?
+
+(b) An electronic unit consists of 5 of the above components that work independently of each other. The electronic equipment works as long as at least 2 of its 5 components work properly, what is the probability that such equipment will work for more
+than 50 days?
+
+(c) A new unit is built with 50 components that also work independently. The new equipment works as long as at least 20 of its 50 components work properly, what is the probability that the equipment will work more than 50 days?
+
+(d) Simulate the last sections. 
+
+Problem 17. Let X be the r.v 'hours spent doing an activity', whose density function is
+
+\[ f(x) =
+  \begin{cases}
+    \frac{1}{4}(x+1)    & \quad \text{if } 0  < x < 2\\
+    0  & \quad \text{otherwise} \\
+  \end{cases}
+\]
+
+(a) Calculate, analytically and by simulation, the probability that the time taken will be more than one and a half hours.
+
+(b) If 10 activities are performed according to v.a. X, calculate, analytically and by simulation, the probability that in exactly three of them, the time taken to perform each one is more than one and a half hours.

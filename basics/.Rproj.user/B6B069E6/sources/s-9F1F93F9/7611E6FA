@@ -1,0 +1,27 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1617000976710.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1607103269",
+    "id" : "7611E6FA",
+    "lastKnownWriteTime" : 1619357892,
+    "last_content_update" : 1619357892596,
+    "path" : "~/Documentos/estadistica/examples/statistic_basics.Rmd",
+    "project_path" : "statistic_basics.Rmd",
+    "properties" : {
+        "cursorPosition" : "405,12",
+        "last_setup_crc32" : "A2ECECDF22e527f5",
+        "scrollLine" : "385",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

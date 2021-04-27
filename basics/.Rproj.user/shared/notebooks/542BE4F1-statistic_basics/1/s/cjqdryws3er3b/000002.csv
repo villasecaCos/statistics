@@ -1,0 +1,6 @@
+"0","# rbinom not useful when sample space is not {0,1}"
+"0","# number of dice (a trick to  simulate 5 rolls)"
+"0","# instead of 3 dice and two times two of them (because they all are even)"
+"0","dice <- 5"
+"0","sample.space <- 1:6"
+"0","rolls <- sample(sample.space, size = dice, replace = TRUE)"
