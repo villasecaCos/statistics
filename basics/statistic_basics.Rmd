@@ -61,10 +61,10 @@ of rain troughout the weekend (given that the weather forecast on saturday does 
 
 ```{r}
 prob.rain <- 0.5 #probability of rain
-n2 <- 52 #weeks in a year
-rainy.days <- rbinom(n2, size = 2, prob=prob.rain)#number of days that have rained in 2 days
+n <- 52 #weeks in a year
+rainy.days <- rbinom(n, size = 2, prob=prob.rain)#number of days that have rained in 2 days
 rain.in.weekends <- sapply(rainy.days,function(x) if(x>0) 1 else 0)
-prob.weekend <- sum(rain.in.weekends)/n2
+prob.weekend <- sum(rain.in.weekends)/n
 prob.weekend
 
 ```
@@ -89,10 +89,10 @@ Problem 3. Check the reliability of a system that have 5 components in series. E
 
 ```{r}
 prob.fail <- 0.05 #   probability of failure of one component
-n3 <- 1000 #weeks in a year
-components.fails <- rbinom(n3, size = 5, prob=prob.fail)#number of malfunctioning components in a 5 components system.
+n <- 1000 #weeks in a year
+components.fails <- rbinom(n, size = 5, prob=prob.fail)#number of malfunctioning components in a 5 components system.
 system.failures <- sapply(components.fails, function(x) if(x>=1) 1 else 0)
-prob.failure <- sum(system.failures)/n3 # probability of failure of the system
+prob.failure <- sum(system.failures)/n # probability of failure of the system
 prob.failure
 ```
 
@@ -140,19 +140,19 @@ P(A_{1}\cap \bar{A_{2}}\cap A_{3}) = 0.8*0.5*0.7 + 0.2*0.5*0.3 + 0.8*0.5*0.3 = 0
 
 ```{r }
 
-n4 <- 10000
+n <- 10000
 prob.a1 <- 0.8 # a1 is advisor 1
 prob.a2 <- 0.5 
 prob.a3 <- 0.3
-recommend.a1 <- rbinom(n4, size = 1, prob=prob.a1)# a1 recommend or not
+recommend.a1 <- rbinom(n, size = 1, prob=prob.a1)# a1 recommend or not
 # the previous line is equivalent to:  rbern(n4,prob.a1)
-recommend.a2 <- rbinom(n4, size = 1, prob=prob.a2)
-recommend.a3 <- rbinom(n4, size = 1, prob=prob.a3)
+recommend.a2 <- rbinom(n, size = 1, prob=prob.a2)
+recommend.a3 <- rbinom(n, size = 1, prob=prob.a3)
 total.recommned <- recommend.a1+recommend.a2+recommend.a3
 at.least.one <- sapply(total.recommned, function(x) if(x>=1) 1 else 0)
-prob.at.least.one <- sum(at.least.one)/n4
+prob.at.least.one <- sum(at.least.one)/n
 two <- sapply(total.recommned, function(x) if(x==2) 1 else 0)
-prob.two <- sum(two)/n4
+prob.two <- sum(two)/n
 prob.at.least.one
 prob.two
 ```
@@ -180,14 +180,14 @@ P(CC) = 1 - (0.1⁴ + 4*0.9*0.1³+4*0.9²*0.1²) = 1 - 0.0361 = 0.9639
 (b) Approximate (a)
 
 ```{r}
-n5 <- 10000
+n <- 10000
 prob.I <- 0.9
-odd.switchs.down <- rbinom(n5,size = 2, prob = prob.I)# there are 2 switches per branch
-even.switchs.down <- rbinom(n5,size = 2, prob = prob.I)
+odd.switchs.down <- rbinom(n,size = 2, prob = prob.I)# there are 2 switches per branch
+even.switchs.down <- rbinom(n,size = 2, prob = prob.I)
 connections.odd <- sapply(odd.switchs.down, function(x) if(x==2) 1 else 0)
 connections.even <- sapply(even.switchs.down, function(x) if(x==2) 1 else 0)
 total.connections <- sapply(connections.even + connections.odd, function(x) if(x>=1) 1 else 0)
-prob.closed <- sum(total.connections)/n5
+prob.closed <- sum(total.connections)/n
 prob.closed
 ```
 
@@ -232,13 +232,13 @@ P(\bar{E1}/\bar{S}) = P(C\cap[M1\cup M2\cup M3]\cap [\bar{E1}\cap \bar{E2}]) = P
 ```{r echo=FALSE}
 prob.f <- 0.95
 n6 = 1000
-component.c <- rbinom(n6, size = 1, prob = prob.f)
-components.m <- rbinom(n6, size = 3, prob = prob.f)
+component.c <- rbinom(n, size = 1, prob = prob.f)
+components.m <- rbinom(n, size = 3, prob = prob.f)
 num.success.m <- sapply(components.m, function(x) if(x>=1) 1 else 0)
-conponents.e <- rbinom(n6, size = 2, prob = prob.f)
+conponents.e <- rbinom(n, size = 2, prob = prob.f)
 num.succes.e <- sapply(conponents.e, function(x) if(x>=1) 1 else 0)
 num.success <- sapply(component.c*num.success.m*num.succes.e, function(x) if(x>=1) 1 else 0)
-prob.s <- sum(num.success)/n6
+prob.s <- sum(num.success)/n
 prob.s
 ```
 
@@ -473,13 +473,14 @@ V = a cos(θ):
 (c)
 
 ```{r}
-n <- 10000
+n <- 1000
 a <- 1
 theta <- runif(n,min = 0, max = pi)
 
 velocity.theory <- runif(n, min=-1,max=1)
 velocity <- a*cos(theta)
 
+hist(velocity)
 plot(theta,velocity.theory)
 plot(theta,velocity)
 ```
@@ -506,9 +507,35 @@ On the other hand, for a type II customer, this time is distributed according to
 
 (a) What is the probability that a customer will spend at most a quarter of an hour in the office?
 
+\[
+P[T_I \cap T_{II} < 15] = P(I)P(T_I < 15) + P(II)P(T_{II}<15) = 
+\]
+\[
+\frac{75}{200}(1-\mathrm{e^{-\frac{15}{15}}}) + \frac{125}{200}(1-\mathrm{e^{-\frac{15}{10}}}) = 0.7225
+\]
+
 (b) If a customer has spent less than 15 minutes in the office, what is the probability that the customer has made a complaint?
 
+
+
 (c) Approximate (a) and (b)
+
+```{r}
+n <- 1000
+lambda.I <- 0.06666 # rate of 15
+lambda.II <- 0.1 # rate of 10
+type.I <- 0.375
+type.II <- 0.625
+office <- type.I*rexp(n, lambda.I)+type.II*rexp(n,lambda.II)
+a <- sum(office<15)/n
+
+office.I <- type.I*rexp(n, lambda.I)
+office.II <- type.I*rexp(n, lambda.II)
+I <- sum(office.I>15)
+II <- sum(office.II>15)
+b <- I/(I+II)
+```
+
 
 Problem 18. The lifetime of certain electronic components follows an Exponential distribution with a mean of 100 days.
 
