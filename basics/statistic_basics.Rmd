@@ -1,11 +1,10 @@
 ---
-title: "basic statistics"
+title: "Basic statistics"
 author: "Juan Villaseca"
 date: "29/3/2021"
 output: html_document
 resource_files:
   - images/figure.png
-
 ---
 
 ```{r setup, include=FALSE}
@@ -15,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 # Chapter 1. Descriptive statistics 
 
 ## Problem 1
+
 An study about nutrition and health requested information of the food. Specifically, the amount of proteins(gr), carbohydrates(gr), fats(gr), and sodium(mgr) in their products. 
 
 A list of the products is presented below: 
@@ -33,25 +33,14 @@ products.info
 
 (a) Compute the mean, median, standard deviation, first and third quantiles for each column. 
 
-```{r echo=FALSE}
-# create a dataframe with means, median, std of the columns
-col.names <- c('measure','proteins','carbohydrates','fats','sodium')
-measures.names <- c('mean','median','std')
-measures <- data.frame(matrix(ncol = length(col.names), nrow = length(measures.names)))
-names(measures) <- col.names
-measures[1]<- measures.names
-measures[1,2:5] <- apply(products.info[2:5],2,mean)#second parameter means by columns
-measures[2,2:5] <- apply(products.info[2:5],2,median)
-measures[3,2:5] <- apply(products.info[2:5],2,sd)
-measures
-quartiles.proteins <- quantile(products.info$proteins)# returns named vector
-quartiles.proteins
-
+```{r echo=TRUE}
+# compute descriptive statistics
+summary(products.info)
 ```
 
-(b) Compute covariancce and correlation matrices. 
+(b) Compute covariance and correlation matrices. 
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 cov.matrix <- cov(products.info[2:5])#compute covariance matrix over the columns
 cor.matrix <- cor(products.info[2:5])#compute correlation matrix over the columns
 cov.matrix
@@ -59,17 +48,17 @@ cor.matrix
 ```
 
 ## Problem 2
+
 If the probability of rain throughout the day is 0.5, approximate the probability
 of rain troughout the weekend (given that the weather forecast on saturday does not add any information of the weather forecast of sunday). Compare it with the theoretically probability. 
 
 ```{r}
-prob.rain <- 0.5 #probability of rain
-n <- 52 #weeks in a year
-rainy.days <- rbinom(n, size = 2, prob=prob.rain)#number of days that have rained in 2 days
+prob.rain <- 0.5 # probability of rain
+n <- 520 # weeks in 10 years
+rainy.days <- rbinom(n, size = 2, prob=prob.rain) # number of days that have rained in 2 days
 rain.in.weekends <- sapply(rainy.days,function(x) if(x>0) 1 else 0)
 prob.weekend <- sum(rain.in.weekends)/n
 prob.weekend
-
 ```
 
 \[
@@ -89,12 +78,13 @@ P(R) = 0.75 , P(A) = P(B) = 1/2
 \]
 
 ## Problem 3
+
 Check the reliability of a system that have 5 components in series. Each component has a failure probability of 5%. Compare it with the theoretically reliability. 
 
 ```{r}
-prob.fail <- 0.05 #   probability of failure of one component
-n <- 1000 #weeks in a year
-components.fails <- rbinom(n, size = 5, prob=prob.fail)#number of malfunctioning components in a 5 components system.
+prob.fail <- 0.05 # probability of failure of one component
+n <- 1000 # sample size
+components.fails <- rbinom(n, size = 5, prob=prob.fail) # 5 components system.
 system.failures <- sapply(components.fails, function(x) if(x>=1) 1 else 0)
 prob.failure <- sum(system.failures)/n # probability of failure of the system
 prob.failure
@@ -107,13 +97,15 @@ P(F) \sim \text{Probability of failure of one component}
 P(S) \sim \text{Probability of failure of the system}
 \]
 \[
-P(S) = P(F.{1}\cup F.{2}\cup ...F.{5}) = 1 - P(\bar{F.{1}} \cap \bar{F.{2}}\cap...\bar{F.{5}}) = 1 - P(\bar{F})^5 = 1 - 0.95⁵ = 0.226 
+P(S) = P(F_1\cup F_2\cup ...F_5) = 1 - P(\bar{F_1} \cap \bar{F_2}\cap...\bar{F_5}) = 1 - P(\bar{F})^5 = 1 - 0.95⁵ = 0.226 
 \]
 
 ## Problem 4 
+
 A company that has to decide whether to purchase a certain block of shares asks the opinion of three financial advisors, who will independently decide in favor of the purchase with probabilities of 0.8, 0.5 and 0.3, respectively.
 
 (a) Determine the probability of, at least, one of them recommending the purchase. 
+
 \[
 P(B) \sim \text{Probability of at least, one of them recommending the purchase}
 \]
@@ -121,7 +113,7 @@ P(B) \sim \text{Probability of at least, one of them recommending the purchase}
 P(A) \sim \text{Probability of decide in favor of the purchase}
 \]
 \[
-P(B) = P(A.{1}\cup A.2\cup A.{3}) = 1 - P(\bar{A.{1}}\cap \bar{A.{2}}\cap \bar{A.{3}}) = 1 - 0.2*0.5*0.7 = 1 - 0.07 = 0.93
+P(B) = P(A_1\cup A_2\cup A_3) = 1 - P(\bar{A_1}\cap \bar{A_2}\cap \bar{A_3}) = 1 - 0.2*0.5*0.7 = 1 - 0.07 = 0.93
 \]
 
 (b) Determine the probability of none of them recommending the purchase. 
@@ -144,13 +136,12 @@ P(A_{1}\cap \bar{A_{2}}\cap A_{3}) = 0.8*0.5*0.7 + 0.2*0.5*0.3 + 0.8*0.5*0.3 = 0
 (d) Approximate section (a) and (c)
 
 ```{r }
-
 n <- 10000
 prob.a1 <- 0.8 # a1 is advisor 1
 prob.a2 <- 0.5 
 prob.a3 <- 0.3
-recommend.a1 <- rbinom(n, size = 1, prob=prob.a1)# a1 recommend or not
-# the previous line is equivalent to:  rbern(n4,prob.a1)
+recommend.a1 <- rbinom(n, size = 1, prob=prob.a1) # a1 recommend or not
+# the previous line is equivalent to:  rbern(n,prob.a1)
 recommend.a2 <- rbinom(n, size = 1, prob=prob.a2)
 recommend.a3 <- rbinom(n, size = 1, prob=prob.a3)
 total.recommned <- recommend.a1+recommend.a2+recommend.a3
@@ -165,7 +156,7 @@ prob.two
 ## Problem 5
 Consider the electrical circuit consisting of four switches, I1, I2, I3 and I4, arranged as shown in Figure 1.1. Knowing that for each switch, the state in which it is (open or closed) is independent of the state of the other switches and that the probability of being open (i.e. not allowing current to flow) is 10%. 
 
-![Electric circuit.](images/circuit1.png)
+![Fig 1. Electric circuit](images/circuit1.png)
 
 
 (a) Determine the probability that the circuit is closed, i.e. there is a connection between A and B.
@@ -201,7 +192,7 @@ prob.closed
 An industrial process follows the scheme shown in Figure 1.2. According to this scheme, for a part to be manufactured correctly, it must go through three different sub-processes:
 1) Pre-check (C), 2) Assembly, which may be carried out by three different types of machinery (M1, M2 or M3), and 3) Packaging, which can be done in cardboard or metal boxes (E1 or E2). Knowing that each of these six sub-processes is passed correctly (or is operative) with a probability of 95 % and that the sub-processes occur independently of each other.
 
-![Industrial process.](images/factory.png)
+![Fig 2. Industrial process](images/factory.png)
 
 (a) Determine the probability that a randomly chosen part will be manufactured correctly
 
@@ -236,7 +227,7 @@ P(\bar{E1}/\bar{S}) = P(C\cap[M1\cup M2\cup M3]\cap [\bar{E1}\cap \bar{E2}]) = P
 
 (d) Approximate (a)
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 prob.f <- 0.95
 n = 1000
 component.c <- rbinom(n, size = 1, prob = prob.f)
@@ -316,10 +307,10 @@ Applying the inverse method:
 F^{-1}(u) = \mathrm{log(1-\mathrm{log(1-u))}}
 \]
 \[
-\text{with X\sim U(0,1) = F^{-1}(u)
+\text{with } X\sim U(0,1) = F^{-1}(u)
 \]
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 u <- runif(100)
 n <- log(1 - log(1-u))
 ```
@@ -341,9 +332,9 @@ X \text{ is a piecewise function. For each piece, we need to find the original f
 
 \[ f(n) =
   \begin{cases}
-    2*\sqrt u    & \quad \text{if } u < 0.25\\
-    2*u + 0.5   & \quad \text{if }  0.25 <=  u < 0.75\\
-    3 - 2*\sqrt{1-u}   & \quad \text{if }  u >= 0.75\\
+    2\sqrt u    & \quad \text{if } u < 0.25\\
+    2u + 0.5   & \quad \text{if }  0.25 <=  u < 0.75\\
+    3 - 2\sqrt{1-u}   & \quad \text{if }  u >= 0.75\\
   \end{cases}
 \]
 \[
@@ -483,19 +474,21 @@ V = a cos(θ):
 \]
 
 (b) 
+
+\[
+E[V] = \int_{-1}^1{vf(v)}dv = 
+\]
+
 (c)
 
-```{r}
-n <- 1000
-a <- 1
+```{r echo=TRUE}
+n <- 10000
+a <- 25
 theta <- runif(n,min = 0, max = pi)
+u <- runif(n, min=-1, max=1)
 
-velocity.theory <- cos(1/pi)
-velocity <- a*(-cos(theta))
-
-hist(theta)
-hist(velocity)
-plot(theta,velocity)
+velocity <- a*(cos(theta))
+prob.15 <- sum(velocity>15)/n
 ```
 
 
