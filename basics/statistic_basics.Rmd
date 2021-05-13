@@ -420,7 +420,7 @@ plot.fx <- plot(x,fx)
 
 ## Problem 11 
 
-Given X a Rayleigh r.v of parameter \[\alpha > 0\], with density function is:
+Given X a Rayleigh r.v of parameter alpha > 0, with density function is:
 
 \[ f(x) =
   \begin{cases}
@@ -448,8 +448,7 @@ F(x) = \int_{0}^{x}{\alpha t\mathrm{e^{-\frac{\alpha}{2}t^2}} dt} = - \int_{0}^{
 F^{-1}(x) = \sqrt{-\frac{2}{\alpha}\log(1-u)}
 \]
 
-
-(a) Generate 50 values of X with \[alpha=0.1\]
+(a) Generate 50 values of X with alpha = 0.1,
 What numerical and graphical procedures could be used to see that the v.a. has been generated correctly? 
 
 \[
@@ -457,17 +456,26 @@ What numerical and graphical procedures could be used to see that the v.a. has b
 \]
 
 ```{r echo=TRUE}
-n <- 1000
-a <- 0.17
-u <- runif(n)
+library(extraDistr)
+n <- 10000 # sample size
+a <- 0.17 # alpha
+sigma <- 1/sqrt(a)
+u <- runif(n) # uniform(0,1)
 
-x <- sqrt((-2/a)*log(1-u))
-plot(u,x)
+x <- sqrt((-2/a)*log(1-u)) # inverse method
+plot(u,x) # plot distribution function
 
-mean <- mean(x)
-theoretical_mean <- sqrt(pi/(2*a))
-var <- var(x)
-theoretical_var <- (4 - pi)/(2*a)
+hist(x) # approx. of rayleigh density function
+plot(x, drayleigh(x, sigma = sigma)) # actual rayleigh density function
+
+mean.X <- mean(x) # compute mean empirically
+theoretical.mean <- sqrt(pi/(2*a))
+mean.X
+theoretical.mean 
+var.X <- var(x) # compute var empirically
+theoretical.var <- (4 - pi)/(2*a)
+var.X
+theoretical.var
 ```
   
 ## Problem 12
