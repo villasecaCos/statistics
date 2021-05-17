@@ -390,7 +390,7 @@ X =  1 - \bigg( \frac{3 - x}{2}\bigg)^2
     0                  & \quad \text{if } x < 0\\
     \frac{x^2}{{4}}    & \quad \text{if } x < 1\\
     \frac{x - 0.5}{{2}}  & \quad \text{if }  1 <=  x < 2\\
-    1 - \bigg( \frac{3 - x}{2}\bigg)^2   & \quad \text{if }  2 <=  x < 3\\
+    1 - \bigg( \frac{3 - x}{4}\bigg)^2   & \quad \text{if }  2 <=  x < 3\\
     1 & \quad \text{if } x >= 3\\
   \end{cases}
 \]
@@ -406,11 +406,9 @@ X =  1 - \bigg( \frac{3 - x}{2}\bigg)^2
 \]
 
 ```{r}
-library(ggplot2)
-
 n <- 1000 # sample size
 x <- seq(0, 3, by=0.1) # points vector from 0 to 3 with step of 0.1
-Fx <- (x^2)/4*(x<1) + ((x-0.5)/2)*(1<=x & x<2) + (1-((3-x)/2)^2)*(2<=x & x<3) + 1*(x<=3)
+Fx <- (x^2)/4*(x<1) + ((x-0.5)/2)*(1<=x & x<2) + (1-(((3-x)^2)/4))*(2<=x & x<3) + 1*(x>=3)
 fx <- x/2*(x<1) + (1/2)*(1<=x & x<2) + ((3-x)/2)*(2<=x & x<3)
 
 plot(x, Fx, main='distribution function')
@@ -465,7 +463,7 @@ sigma <- 1/sqrt(a)
 u <- runif(n) # uniform(0,1)
 
 x <- sqrt((-2/a)*log(1-u)) # inverse method
-plot(u,x) # plot distribution function - CANNOT BE A DISTRIBUTION FUNCTION
+plot(x,u, main='distribution function') # plot distribution function
 
 distrib <- enframe(drayleigh(x, sigma = sigma)) # theoretical rayleigh
 p <- ggplot(distrib, aes(x = x)) 
@@ -498,20 +496,7 @@ V = a cos(θ)
   \end{cases}
 \]
 
-\[ F(v) =
-  \begin{cases}
-    0 & \quad \text{if } v  < a\\
-    acos(\frac{x+1}{2})    & \quad \text{if } -1  < v < 1\\
-    1  & \quad \text{if } v > b
-  \end{cases}
-\]
 
-\[ f(v) =
-  \begin{cases}
-    acos(\frac{1}{\pi})    & \quad \text{if } -1  < v < 1\\
-    0  & \quad \text{otherwise} \\
-  \end{cases}
-\]
 
 (b) 
 
@@ -537,14 +522,25 @@ Indicate how you would simulate the value of the number e = 2.71828...
 
 (a) Using poisson process
 
-```{r}
-lamda <- 3
-n <- 1000
-e <- rpois(n,lamda)
-mean(e)
+```{r, echo=TRUE}
+lamda <- 1
+num.success <- 0
+e.inverse <- ppois(num.success,lamda) # probability function
+e <- 1/e_inverse
+e
 ```
 
 (b) Using exponential distribution
+
+```{r, echo=TRUE}
+lamda <- 1
+prob.greater <- 1
+e.inverse <- dexp(prob.greater, # X-axis values (> 0)
+     rate=lamda)  # Vector of rates (lambdas)
+e <- 1/e.inverse
+e
+```
+
 
 ## Problem 14
 
